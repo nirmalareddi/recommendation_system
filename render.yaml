@@ -1,0 +1,53 @@
+# Render Blueprint — deploys the backend API, the static frontend, and a
+# free PostgreSQL database in one go. See README.md "Deploying to Render"
+# for the step-by-step (push to GitHub, then "New +" -> "Blueprint" in
+# the Render dashboard, pointing at this repo).
+#
+# SQLite is NOT used in this deployment: Render's free web services have
+# an ephemeral filesystem (any SQLite file is wiped on every restart/
+# redeploy), so this blueprint provisions a free Postgres instance and
+# wires DATABASE_URL to it automatically.
+
+databases:
+  - name: admissions-db
+    plan: free
+    databaseName: admissions_poc
+    user: admissions_poc
+
+services:
+  - type: web
+    name: admissions-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: admissions-db
+          property: connectionString
+      - key: ALLOWED_ORIGINS
+        value: "*"   # tighten to your static site's URL after first deploy
+      # Set these manually in the Render dashboard (Environment tab) —
+      # left unset here on purpose since they're secrets:
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: SENDGRID_API_KEY
+        sync: false
+      # NOTE: SMTP_USERNAME/SMTP_PASSWORD are NOT usable on Render's free
+      # tier — outbound SMTP ports (25/465/587) are blocked there as of
+      # Sept 2025. Use RESEND_API_KEY or SENDGRID_API_KEY instead when
+      # deployed. SMTP still works fine for local development.
+      - key: NOTIFICATION_FROM_EMAIL
+        sync: false
+
+  - type: web
+    name: admissions-frontend
+    runtime: static
+    plan: free
+    rootDir: frontend/student-form
+    buildCommand: ""
+    staticPublishPath: .

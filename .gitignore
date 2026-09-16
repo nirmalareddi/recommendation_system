@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+*.egg-info/
+
+# Local database
+*.db
+
+# Environment files (never commit real secrets)
+.env
+
+# Editor/OS
+.vscode/
+.DS_Store
+
+# Test artifacts
+.pytest_cache/
+backend/all_code.txt
+backend/check_resend.py

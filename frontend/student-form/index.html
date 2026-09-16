@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>University Recommendation — Student Intake</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 480px; margin: 40px auto; padding: 0 16px; color: #222; }
+  h1 { font-size: 1.4rem; }
+  label { display: block; margin-top: 14px; font-weight: 600; font-size: 0.9rem; }
+  input, select { width: 100%; padding: 8px; margin-top: 4px; box-sizing: border-box; font-size: 1rem; }
+  small { color: #666; }
+  button { margin-top: 20px; padding: 10px 16px; font-size: 1rem; cursor: pointer; }
+  #result { margin-top: 24px; padding: 12px; border-radius: 6px; }
+  #result.success { background: #e6f4ea; border: 1px solid #34a853; }
+  #result.error { background: #fce8e6; border: 1px solid #ea4335; }
+  #result ul { padding-left: 20px; }
+  #result li { margin-bottom: 12px; }
+</style>
+</head>
+<body>
+  <h1>University Recommendation — Student Intake</h1>
+  <p>POC form: submits directly to the FastAPI backend and shows the auto-generated, explained top-3 recommendations.</p>
+
+  <form id="intake-form">
+    <label>Full name
+      <input type="text" name="name" required>
+    </label>
+    <label>Email
+      <input type="email" name="contact_email" required>
+    </label>
+    <label>Phone (optional)
+      <input type="tel" name="contact_phone">
+    </label>
+    <label>Highest academic qualification
+      <input type="text" name="academic_qualification" placeholder="e.g. Bachelor's Degree" required>
+    </label>
+    <label>Field of study (optional)
+      <input type="text" name="field_of_study" placeholder="e.g. Computer Engineering">
+    </label>
+    <label>Marks (percentage, 0-100) — provide this OR CGPA below
+      <input type="number" step="0.01" min="0" max="100" name="marks_percentage">
+    </label>
+    <label>CGPA (0-10 scale) — provide this OR marks above
+      <input type="number" step="0.01" min="0" max="10" name="cgpa">
+    </label>
+    <label>Max annual budget in USD (optional)
+      <input type="number" step="1" min="0" name="budget_max_usd">
+    </label>
+    <label>English test score, e.g. IELTS band (optional)
+      <input type="number" step="0.1" min="0" max="9" name="english_test_score">
+    </label>
+    <label>Preferred course
+      <input type="text" name="preferred_course" placeholder="e.g. Computer Science" required>
+    </label>
+    <label>Preferred country
+      <input type="text" name="preferred_country" placeholder="e.g. Canada" required>
+    </label>
+    <button type="submit">Submit &amp; get recommendations</button>
+  </form>
+
+  <div id="result" style="display:none;"></div>
+
+  <script>
+    // Point this at wherever the FastAPI backend is running.
+    // LOCAL:  http://127.0.0.1:8000 (default below — works out of the box)
+    // DEPLOYED: replace with your Render backend URL, e.g.
+    //           https://admissions-api-xxxx.onrender.com
+    // TODO: update this before deploying the frontend to Render.
+    const API_BASE_URL = "http://127.0.0.1:8000";
+
+    const form = document.getElementById("intake-form");
+    const resultDiv = document.getElementById("result");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      resultDiv.style.display = "block";
+      resultDiv.className = "";
+      resultDiv.innerHTML = "Submitting...";
+
+      const formData = new FormData(form);
+      const payload = Object.fromEntries(formData.entries());
+
+      // Drop empty optional fields rather than sending empty strings.
+      ["contact_phone", "field_of_study", "marks_percentage", "cgpa", "budget_max_usd", "english_test_score"]
+        .forEach((key) => { if (!payload[key]) delete payload[key]; });
+
+      ["marks_percentage", "cgpa", "budget_max_usd", "english_test_score"].forEach((key) => {
+        if (payload[key] !== undefined) payload[key] = parseFloat(payload[key]);
+      });
+
+      try {
+        const studentResp = await fetch(`${API_BASE_URL}/students`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!studentResp.ok) {
+          const err = await studentResp.json();
+          throw new Error(err.detail ? JSON.stringify(err.detail) : "Failed to submit profile");
+        }
+        const student = await studentResp.json();
+
+        const recResp = await fetch(`${API_BASE_URL}/students/${student.id}/recommendations`, {
+          method: "POST",
+        });
+        if (!recResp.ok) {
+          const err = await recResp.json();
+          throw new Error(err.detail || "Failed to generate recommendations");
+        }
+        const rec = await recResp.json();
+
+        let html = `<strong>Recommendations sent to ${payload.contact_email}!</strong><ul>`;
+        rec.recommendations.forEach((item, i) => {
+          html += `<li><strong>${i + 1}. ${item.university_name}</strong> (score: ${item.score})<br>${item.explanation || ""}</li>`;
+        });
+        html += "</ul>";
+        resultDiv.className = "success";
+        resultDiv.innerHTML = html;
+      } catch (err) {
+        resultDiv.className = "error";
+        resultDiv.innerHTML = `Error: ${err.message}`;
+      }
+    });
+  </script>
+</body>
+</html>

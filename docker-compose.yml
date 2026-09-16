@@ -1,0 +1,27 @@
+# POC-level docker-compose: single backend service on SQLite.
+# For a more production-like setup, add a postgres service and point
+# DATABASE_URL at it (see backend/app/config/settings.py).
+
+services:
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite:///./admissions_poc.db
+      # --- Email: pick ONE of these ---
+      # Option A: Resend (recommended, HTTPS-based, 3,000/month free)
+      # - RESEND_API_KEY=
+      # - NOTIFICATION_FROM_EMAIL=admissions@example.com
+      # Option B: SendGrid (note: free plan retired in 2025, now trial-only)
+      # - SENDGRID_API_KEY=
+      # Option C: Gmail/SMTP (local dev only — blocked on Render's free tier)
+      # - SMTP_USERNAME=youraccount@gmail.com
+      # - SMTP_PASSWORD=your16charapppassword
+      # Leave all of the above unset to use console-logged email fallback
+      # - ANTHROPIC_API_KEY=       # leave unset to use template-based explanations instead of LLM
+      # - ANTHROPIC_MODEL=claude-haiku-4-5-20251001
+    volumes:
+      - ./backend:/app
+      - ./data:/data

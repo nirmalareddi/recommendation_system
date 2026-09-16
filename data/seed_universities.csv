@@ -1,0 +1,16 @@
+name,country,program_name,required_qualification,min_marks_percentage_cutoff,seats_available,annual_tuition_fee_usd,min_english_test_score,application_deadline
+University of Toronto,Canada,Computer Science,Bachelor's Degree,75,50,45000,6.5,2027-01-15
+McGill University,Canada,Computer Science,Bachelor's Degree,70,40,38000,6.5,2027-02-01
+University of Waterloo,Canada,Computer Science,Bachelor's Degree,80,30,42000,6.5,2027-01-31
+University of Manchester,United Kingdom,Computer Science,Bachelor's Degree,65,60,32000,6.0,2027-03-01
+Imperial College London,United Kingdom,Computer Science,Bachelor's Degree,85,25,40000,7.0,2027-01-10
+University of Melbourne,Australia,Computer Science,Bachelor's Degree,70,45,35000,6.5,2027-02-15
+Monash University,Australia,Computer Science,Bachelor's Degree,68,55,30000,6.5,2027-02-28
+Technical University of Munich,Germany,Computer Science,Bachelor's Degree,72,35,3000,6.5,2027-01-15
+University of Toronto,Canada,Data Science,Bachelor's Degree,78,20,46000,6.5,2027-01-15
+Arizona State University,United States,Computer Science,Bachelor's Degree,60,80,28000,6.0,2027-04-01
+Carnegie Mellon University,United States,Computer Science,Bachelor's Degree,90,15,58000,7.0,2026-12-15
+University of Melbourne,Australia,Business Analytics,Bachelor's Degree,70,30,34000,6.5,2027-02-15
+McGill University,Canada,Business Analytics,Bachelor's Degree,72,25,37000,6.5,2027-02-01
+University of Manchester,United Kingdom,Data Science,Bachelor's Degree,68,40,31000,6.0,2027-03-01
+National University of Singapore,Singapore,Computer Science,Bachelor's Degree,82,20,32000,6.5,2027-01-20
