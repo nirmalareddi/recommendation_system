@@ -2,14 +2,14 @@
 # free PostgreSQL database in one go.
 
 databases:
-  - name: admissions-db
+  - name: recommendation-db
     plan: free
     databaseName: admissions_poc
     user: admissions_poc
 
 services:
   - type: web
-    name: admissions-api
+    name: recommendation-api
     runtime: python
     plan: free
     rootDir: backend
@@ -22,7 +22,7 @@ services:
 
       - key: DATABASE_URL
         fromDatabase:
-          name: admissions-db
+          name: recommendation-db
           property: connectionString
 
       - key: ALLOWED_ORIGINS
@@ -41,7 +41,7 @@ services:
         sync: false
 
   - type: web
-    name: admissions-frontend
+    name: recommendation-frontend
     runtime: static
     rootDir: frontend/student-form
     buildCommand: ""
