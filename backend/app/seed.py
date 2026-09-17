@@ -23,10 +23,11 @@ def seed_universities():
     db = SessionLocal()
     try:
         existing_count = db.query(db_models.University).count()
+
         if existing_count > 0:
-            print(f"Universities table already has {existing_count} rows — skipping seed. "
-                  f"Delete admissions_poc.db to reseed from scratch.")
-            return
+            print(f"Removing {existing_count} existing university records...")
+            db.query(db_models.University).delete()
+            db.commit()
 
         with open(CSV_PATH, newline="", encoding="utf-8") as f:
             reader = csv.DictReader(f)
@@ -37,6 +38,8 @@ def seed_universities():
                     country=row["country"],
                     program_name=row["program_name"],
                     required_qualification=row["required_qualification"],
+                    field_of_study=row.get("field_of_study") or None,
+                    degree_level=row.get("degree_level") or None,
                     min_marks_percentage_cutoff=float(row["min_marks_percentage_cutoff"]),
                     seats_available=_float_or_none(row.get("seats_available")),
                     annual_tuition_fee_usd=_float_or_none(row.get("annual_tuition_fee_usd")),

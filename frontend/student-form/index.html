@@ -1,126 +1,2592 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>University Recommendation — Student Intake</title>
-<style>
-  body { font-family: system-ui, sans-serif; max-width: 480px; margin: 40px auto; padding: 0 16px; color: #222; }
-  h1 { font-size: 1.4rem; }
-  label { display: block; margin-top: 14px; font-weight: 600; font-size: 0.9rem; }
-  input, select { width: 100%; padding: 8px; margin-top: 4px; box-sizing: border-box; font-size: 1rem; }
-  small { color: #666; }
-  button { margin-top: 20px; padding: 10px 16px; font-size: 1rem; cursor: pointer; }
-  #result { margin-top: 24px; padding: 12px; border-radius: 6px; }
-  #result.success { background: #e6f4ea; border: 1px solid #34a853; }
-  #result.error { background: #fce8e6; border: 1px solid #ea4335; }
-  #result ul { padding-left: 20px; }
-  #result li { margin-bottom: 12px; }
-</style>
+    <meta charset="UTF-8" />
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    />
+
+    <title>UniMatch AI — Find Your Right University</title>
+
+    <meta
+        name="description"
+        content="AI-powered university recommendations personalized to your academic profile, budget, course and country preferences."
+    />
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #3730a3;
+            --primary-light: #eef2ff;
+            --text: #172033;
+            --muted: #667085;
+            --border: #e4e7ec;
+            --background: #f7f8fc;
+            --white: #ffffff;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --warning: #d97706;
+        }
+
+        body {
+            font-family:
+                Inter,
+                ui-sans-serif,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(
+                    circle at 10% 0%,
+                    #eef2ff 0,
+                    transparent 32%
+                ),
+                radial-gradient(
+                    circle at 90% 10%,
+                    #e0e7ff 0,
+                    transparent 28%
+                ),
+                var(--background);
+            min-height: 100vh;
+        }
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .page {
+            min-height: 100vh;
+        }
+
+        /* ---------------------------------------------------------
+           HEADER
+        --------------------------------------------------------- */
+
+        .header {
+            height: 76px;
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid rgba(228, 231, 236, 0.8);
+            display: flex;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-inner {
+            width: min(1180px, calc(100% - 40px));
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            font-size: 20px;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(
+                135deg,
+                #4f46e5,
+                #7c3aed
+            );
+            display: grid;
+            place-items: center;
+            color: white;
+            font-size: 19px;
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.25);
+        }
+
+        .brand span {
+            color: var(--primary);
+        }
+
+        .header-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f0fdf4;
+            color: #15803d;
+            border: 1px solid #dcfce7;
+            padding: 8px 13px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.12);
+        }
+
+        /* ---------------------------------------------------------
+           HERO
+        --------------------------------------------------------- */
+
+        .hero {
+            width: min(1180px, calc(100% - 40px));
+            margin: 0 auto;
+            padding: 72px 0 46px;
+            text-align: center;
+        }
+
+        .hero-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: var(--primary-light);
+            color: var(--primary);
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 {
+            max-width: 850px;
+            margin: 0 auto;
+            font-size: clamp(38px, 6vw, 64px);
+            line-height: 1.05;
+            letter-spacing: -2.8px;
+            font-weight: 850;
+        }
+
+        .hero h1 .gradient {
+            background: linear-gradient(
+                135deg,
+                #4f46e5,
+                #7c3aed,
+                #2563eb
+            );
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .hero p {
+            max-width: 680px;
+            margin: 22px auto 0;
+            color: var(--muted);
+            font-size: 17px;
+            line-height: 1.7;
+        }
+
+        /* ---------------------------------------------------------
+           MAIN LAYOUT
+        --------------------------------------------------------- */
+
+        .main-container {
+            width: min(1180px, calc(100% - 40px));
+            margin: 0 auto 80px;
+        }
+
+        .form-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.65fr) minmax(300px, 0.75fr);
+            gap: 24px;
+            align-items: start;
+        }
+
+        .form-card {
+            background: rgba(255, 255, 255, 0.94);
+            border: 1px solid rgba(228, 231, 236, 0.9);
+            border-radius: 24px;
+            padding: 34px;
+            box-shadow:
+                0 20px 50px rgba(15, 23, 42, 0.07),
+                0 2px 8px rgba(15, 23, 42, 0.03);
+        }
+
+        /* ---------------------------------------------------------
+           FORM SECTIONS
+        --------------------------------------------------------- */
+
+        .section {
+            margin-bottom: 38px;
+        }
+
+        .section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            margin-bottom: 22px;
+        }
+
+        .section-number {
+            width: 38px;
+            height: 38px;
+            border-radius: 11px;
+            background: var(--primary-light);
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .section-title {
+            font-size: 19px;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+        }
+
+        .section-subtitle {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 3px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 19px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #344054;
+        }
+
+        .required {
+            color: #ef4444;
+            margin-left: 2px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #98a2b3;
+            font-size: 16px;
+            pointer-events: none;
+        }
+
+        input,
+        select {
+            width: 100%;
+            height: 50px;
+            border: 1px solid var(--border);
+            background: #fff;
+            border-radius: 12px;
+            padding: 0 14px;
+            color: var(--text);
+            outline: none;
+            transition:
+                border-color 0.2s,
+                box-shadow 0.2s,
+                transform 0.2s;
+        }
+
+        .has-icon input,
+        .has-icon select {
+            padding-left: 42px;
+        }
+
+        input::placeholder {
+            color: #98a2b3;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #818cf8;
+            box-shadow:
+                0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        input.invalid,
+        select.invalid {
+            border-color: #f87171;
+            box-shadow:
+                0 0 0 4px rgba(239, 68, 68, 0.08);
+        }
+
+        .helper {
+            color: #98a2b3;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+
+        .academic-or {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #98a2b3;
+            font-size: 12px;
+            font-weight: 600;
+            margin: -3px 0 -3px;
+        }
+
+        .academic-or::before,
+        .academic-or::after {
+            content: "";
+            height: 1px;
+            background: var(--border);
+            flex: 1;
+        }
+
+        /* ---------------------------------------------------------
+           SIDE CARD
+        --------------------------------------------------------- */
+
+        .info-column {
+            position: sticky;
+            top: 100px;
+        }
+
+        .info-card {
+            background: linear-gradient(
+                145deg,
+                #111827,
+                #1e1b4b
+            );
+            color: white;
+            border-radius: 24px;
+            padding: 30px;
+            overflow: hidden;
+            position: relative;
+            box-shadow:
+                0 24px 50px rgba(30, 27, 75, 0.2);
+        }
+
+        .info-card::before {
+            content: "";
+            position: absolute;
+            width: 190px;
+            height: 190px;
+            border-radius: 50%;
+            background: rgba(99, 102, 241, 0.22);
+            top: -80px;
+            right: -70px;
+            filter: blur(5px);
+        }
+
+        .info-card::after {
+            content: "";
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: rgba(124, 58, 237, 0.16);
+            bottom: -80px;
+            left: -60px;
+        }
+
+        .info-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .ai-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.12);
+            display: grid;
+            place-items: center;
+            font-size: 22px;
+            margin-bottom: 22px;
+        }
+
+        .info-card h3 {
+            font-size: 23px;
+            letter-spacing: -0.6px;
+            margin-bottom: 10px;
+        }
+
+        .info-card > .info-content > p {
+            color: #c7d2fe;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin-top: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .feature-list li {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            color: #e5e7eb;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .check {
+            flex: 0 0 auto;
+            width: 21px;
+            height: 21px;
+            border-radius: 7px;
+            background: rgba(99, 102, 241, 0.28);
+            display: grid;
+            place-items: center;
+            color: #a5b4fc;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .data-note {
+            margin-top: 27px;
+            padding-top: 19px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #9ca3af;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        /* ---------------------------------------------------------
+           SUBMIT BUTTON
+        --------------------------------------------------------- */
+
+        .submit-area {
+            margin-top: 28px;
+            padding-top: 25px;
+            border-top: 1px solid var(--border);
+        }
+
+        .submit-button {
+            width: 100%;
+            height: 58px;
+            border: 0;
+            border-radius: 14px;
+            color: white;
+            font-weight: 800;
+            font-size: 15px;
+            letter-spacing: -0.1px;
+            background: linear-gradient(
+                135deg,
+                #4f46e5,
+                #6366f1,
+                #7c3aed
+            );
+            box-shadow:
+                0 12px 25px rgba(79, 70, 229, 0.25);
+            transition:
+                transform 0.2s,
+                box-shadow 0.2s,
+                opacity 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow:
+                0 16px 30px rgba(79, 70, 229, 0.3);
+        }
+
+        .submit-button:active {
+            transform: translateY(0);
+        }
+
+        .submit-button:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+            transform: none;
+        }
+
+        .button-arrow {
+            font-size: 18px;
+        }
+
+        .privacy-note {
+            text-align: center;
+            color: #98a2b3;
+            font-size: 11px;
+            margin-top: 12px;
+        }
+
+        /* ---------------------------------------------------------
+           ALERT
+        --------------------------------------------------------- */
+
+        .alert {
+            display: none;
+            padding: 14px 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert.error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+        }
+
+        .alert.success {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+        }
+
+        /* ---------------------------------------------------------
+           LOADING
+        --------------------------------------------------------- */
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .loading-card {
+            width: min(420px, 100%);
+            background: white;
+            border-radius: 22px;
+            padding: 35px;
+            text-align: center;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.2);
+        }
+
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e0e7ff;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 22px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-card h3 {
+            font-size: 19px;
+            margin-bottom: 8px;
+        }
+
+        .loading-card p {
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* ---------------------------------------------------------
+           RESULTS
+        --------------------------------------------------------- */
+
+        #results-section {
+            display: none;
+        }
+
+        #results-section.show {
+            display: block;
+        }
+
+        .results-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .results-header h2 {
+            font-size: 32px;
+            letter-spacing: -1.3px;
+        }
+
+        .results-header p {
+            margin-top: 7px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .new-search {
+            border: 1px solid var(--border);
+            background: white;
+            color: var(--text);
+            border-radius: 11px;
+            padding: 11px 15px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .new-search:hover {
+            border-color: #a5b4fc;
+            color: var(--primary);
+        }
+
+        .recommendations {
+            display: grid;
+            gap: 18px;
+        }
+
+        .recommendation-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 26px;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .recommendation-card.top-card {
+            border-color: #c7d2fe;
+            box-shadow:
+                0 16px 40px rgba(79, 70, 229, 0.09);
+        }
+
+        .recommendation-card.top-card::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(
+                180deg,
+                #4f46e5,
+                #7c3aed
+            );
+        }
+
+        .recommendation-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .rank {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: var(--primary);
+            background: var(--primary-light);
+            border-radius: 8px;
+            padding: 6px 9px;
+            font-size: 11px;
+            font-weight: 800;
+            margin-bottom: 11px;
+        }
+
+        .university-name {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .program-name {
+            margin-top: 6px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .university-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 13px;
+        }
+
+        .meta-pill {
+            background: #f8fafc;
+            border: 1px solid #eef2f6;
+            color: #475467;
+            border-radius: 8px;
+            padding: 6px 9px;
+            font-size: 11px;
+            font-weight: 650;
+        }
+
+        .match-score {
+            min-width: 95px;
+            text-align: right;
+        }
+
+        .score-number {
+            font-size: 28px;
+            line-height: 1;
+            font-weight: 850;
+            color: var(--primary);
+            letter-spacing: -1px;
+        }
+
+        .score-label {
+            color: #98a2b3;
+            font-size: 10px;
+            font-weight: 700;
+            margin-top: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+        }
+
+        .score-bar {
+            height: 7px;
+            border-radius: 999px;
+            background: #eef2f7;
+            margin: 22px 0;
+            overflow: hidden;
+        }
+
+        .score-fill {
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(
+                90deg,
+                #4f46e5,
+                #7c3aed
+            );
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .detail-box {
+            background: #f8fafc;
+            border: 1px solid #eef2f6;
+            border-radius: 12px;
+            padding: 13px;
+        }
+
+        .detail-label {
+            color: #98a2b3;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .detail-value {
+            font-size: 14px;
+            font-weight: 750;
+            color: #344054;
+        }
+
+        .explanation {
+            background: #fafaff;
+            border: 1px solid #eaecff;
+            border-radius: 13px;
+            padding: 16px;
+        }
+
+        .explanation-title {
+            color: var(--primary);
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 7px;
+        }
+
+        .explanation p {
+            color: #475467;
+            font-size: 13px;
+            line-height: 1.65;
+        }
+
+        .email-success {
+            margin-top: 22px;
+            padding: 16px 18px;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 13px;
+            color: #166534;
+            font-size: 13px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        /* ---------------------------------------------------------
+           FOOTER
+        --------------------------------------------------------- */
+
+        footer {
+            text-align: center;
+            padding: 30px 20px 45px;
+            color: #98a2b3;
+            font-size: 11px;
+        }
+
+        /* ---------------------------------------------------------
+           RESPONSIVE
+        --------------------------------------------------------- */
+
+        @media (max-width: 900px) {
+            .form-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .info-column {
+                position: static;
+            }
+
+            .info-card {
+                margin-top: 0;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .header {
+                height: 68px;
+            }
+
+            .header-inner {
+                width: min(100% - 28px, 1180px);
+            }
+
+            .header-badge {
+                display: none;
+            }
+
+            .brand {
+                font-size: 18px;
+            }
+
+            .brand-icon {
+                width: 36px;
+                height: 36px;
+            }
+
+            .hero {
+                width: min(100% - 28px, 1180px);
+                padding: 48px 0 30px;
+            }
+
+            .hero h1 {
+                letter-spacing: -1.8px;
+            }
+
+            .hero p {
+                font-size: 15px;
+            }
+
+            .main-container {
+                width: min(100% - 28px, 1180px);
+            }
+
+            .form-card {
+                padding: 22px;
+                border-radius: 18px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+
+            .academic-or {
+                grid-column: auto;
+            }
+
+            .results-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .results-header h2 {
+                font-size: 27px;
+            }
+
+            .recommendation-top {
+                flex-direction: column;
+            }
+
+            .match-score {
+                text-align: left;
+            }
+
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .recommendation-card {
+                padding: 21px;
+            }
+        }
+    </style>
 </head>
+
 <body>
-  <h1>University Recommendation — Student Intake</h1>
-  <p>POC form: submits directly to the FastAPI backend and shows the auto-generated, explained top-3 recommendations.</p>
 
-  <form id="intake-form">
-    <label>Full name
-      <input type="text" name="name" required>
-    </label>
-    <label>Email
-      <input type="email" name="contact_email" required>
-    </label>
-    <label>Phone (optional)
-      <input type="tel" name="contact_phone">
-    </label>
-    <label>Highest academic qualification
-      <input type="text" name="academic_qualification" placeholder="e.g. Bachelor's Degree" required>
-    </label>
-    <label>Field of study (optional)
-      <input type="text" name="field_of_study" placeholder="e.g. Computer Engineering">
-    </label>
-    <label>Marks (percentage, 0-100) — provide this OR CGPA below
-      <input type="number" step="0.01" min="0" max="100" name="marks_percentage">
-    </label>
-    <label>CGPA (0-10 scale) — provide this OR marks above
-      <input type="number" step="0.01" min="0" max="10" name="cgpa">
-    </label>
-    <label>Max annual budget in USD (optional)
-      <input type="number" step="1" min="0" name="budget_max_usd">
-    </label>
-    <label>English test score, e.g. IELTS band (optional)
-      <input type="number" step="0.1" min="0" max="9" name="english_test_score">
-    </label>
-    <label>Preferred course
-      <input type="text" name="preferred_course" placeholder="e.g. Computer Science" required>
-    </label>
-    <label>Preferred country
-      <input type="text" name="preferred_country" placeholder="e.g. Canada" required>
-    </label>
-    <button type="submit">Submit &amp; get recommendations</button>
-  </form>
+<div class="page">
 
-  <div id="result" style="display:none;"></div>
+    <!-- =========================================================
+         HEADER
+    ========================================================== -->
 
-  <script>
-    // Point this at wherever the FastAPI backend is running.
-    // LOCAL:  http://127.0.0.1:8000 (default below — works out of the box)
-    // DEPLOYED: replace with your Render backend URL, e.g.
-    //           https://admissions-api-xxxx.onrender.com
-    // TODO: update this before deploying the frontend to Render.
-    const API_BASE_URL = "http://127.0.0.1:8000";
+    <header class="header">
+        <div class="header-inner">
 
-    const form = document.getElementById("intake-form");
-    const resultDiv = document.getElementById("result");
+            <div class="brand">
+                <div class="brand-icon">🎓</div>
+                Uni<span>Match</span> AI
+            </div>
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      resultDiv.style.display = "block";
-      resultDiv.className = "";
-      resultDiv.innerHTML = "Submitting...";
+            <div class="header-badge">
+                <span class="status-dot"></span>
+                AI Recommendation Engine
+            </div>
 
-      const formData = new FormData(form);
-      const payload = Object.fromEntries(formData.entries());
+        </div>
+    </header>
 
-      // Drop empty optional fields rather than sending empty strings.
-      ["contact_phone", "field_of_study", "marks_percentage", "cgpa", "budget_max_usd", "english_test_score"]
-        .forEach((key) => { if (!payload[key]) delete payload[key]; });
 
-      ["marks_percentage", "cgpa", "budget_max_usd", "english_test_score"].forEach((key) => {
-        if (payload[key] !== undefined) payload[key] = parseFloat(payload[key]);
-      });
+    <!-- =========================================================
+         HERO
+    ========================================================== -->
 
-      try {
-        const studentResp = await fetch(`${API_BASE_URL}/students`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
+    <section class="hero">
+
+        <div class="hero-label">
+            ✦ Personalized University Discovery
+        </div>
+
+        <h1>
+            Find the
+            <span class="gradient">Right University</span>
+            for You
+        </h1>
+
+        <p>
+            Tell us about your academic background, goals and preferences.
+            Our AI-powered recommendation engine will match your profile
+            with suitable university programs.
+        </p>
+
+    </section>
+
+
+    <!-- =========================================================
+         MAIN
+    ========================================================== -->
+
+    <main class="main-container">
+
+        <!-- FORM VIEW -->
+
+        <div id="form-view">
+
+            <div class="form-layout">
+
+                <!-- FORM -->
+
+                <div class="form-card">
+
+                    <div id="error-alert" class="alert error"></div>
+                    <div id="success-alert" class="alert success"></div>
+
+                    <form id="recommendation-form" novalidate>
+
+                        <!-- =================================================
+                             01 PERSONAL
+                        ================================================== -->
+
+                        <section class="section">
+
+                            <div class="section-heading">
+
+                                <div class="section-number">
+                                    01
+                                </div>
+
+                                <div>
+                                    <div class="section-title">
+                                        Personal Information
+                                    </div>
+
+                                    <div class="section-subtitle">
+                                        Tell us how we can reach you
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="form-grid">
+
+                                <div class="form-group full">
+                                    <label for="name">
+                                        Full Name
+                                        <span class="required">*</span>
+                                    </label>
+
+                                    <div class="input-wrapper has-icon">
+                                        <span class="input-icon">👤</span>
+                                        <input
+                                            id="name"
+                                            name="name"
+                                            type="text"
+                                            placeholder="Enter your full name"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label for="email">
+                                        Email Address
+                                        <span class="required">*</span>
+                                    </label>
+
+                                    <div class="input-wrapper has-icon">
+                                        <span class="input-icon">✉</span>
+                                        <input
+                                            id="email"
+                                            name="email"
+                                            type="email"
+                                            placeholder="you@example.com"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label for="phone">
+                                        Phone Number
+                                        <span class="required">*</span>
+                                    </label>
+
+                                    <div class="input-wrapper has-icon">
+                                        <span class="input-icon">☎</span>
+                                        <input
+                                            id="phone"
+                                            name="phone"
+                                            type="tel"
+                                            placeholder="+91 9876543210"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </section>
+
+
+                        <!-- =================================================
+                             02 ACADEMIC
+                        ================================================== -->
+
+                        <section class="section">
+
+                            <div class="section-heading">
+
+                                <div class="section-number">
+                                    02
+                                </div>
+
+                                <div>
+                                    <div class="section-title">
+                                        Academic Profile
+                                    </div>
+
+                                    <div class="section-subtitle">
+                                        Help us understand your educational background
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-grid">
+
+                                <div class="form-group full">
+
+                                    <label for="qualification">
+                                        Highest Academic Qualification
+                                        <span class="required">*</span>
+                                    </label>
+
+                                    <div class="input-wrapper has-icon">
+
+                                        <span class="input-icon">🎓</span>
+
+                                        <select
+                                            id="qualification"
+                                            name="qualification"
+                                            required
+                                        >
+                                            <option value="">
+                                                Select qualification
+                                            </option>
+
+                                            <option value="Bachelor's Degree">
+                                                Bachelor's Degree
+                                            </option>
+
+                                            <option value="Master's Degree">
+                                                Master's Degree
+                                            </option>
+                                        </select>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="form-group full">
+
+                                    <label for="field">
+                                        Field of Study
+                                        <span class="required">*</span>
+                                    </label>
+
+                                    <div class="input-wrapper has-icon">
+
+                                        <span class="input-icon">📚</span>
+
+                                        <input
+                                            id="field"
+                                            name="field"
+                                            type="text"
+                                            placeholder="e.g. Computer Science, Finance, Biotechnology"
+                                            required
+                                        />
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    <label for="percentage">
+                                        Percentage
+                                    </label>
+
+                                    <div class="input-wrapper has-icon">
+
+                                        <span class="input-icon">%</span>
+
+                                        <input
+                                            id="percentage"
+                                            name="percentage"
+                                            type="number"
+                                            min="0"
+                                            max="100"
+                                            step="0.01"
+                                            placeholder="e.g. 82.5"
+                                        />
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    <label for="cgpa">
+                                        CGPA
+                                    </label>
+
+                                    <div class="input-wrapper has-icon">
+
+                                        <span class="input-icon">★</span>
+
+                                        <input
+                                            id="cgpa"
+                                            name="cgpa"
+                                            type="number"
+                                            min="0"
+                                            max="10"
+                                            step="0.01"
+                                            placeholder="e.g. 8.5"
+                                        />
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="academic-or">
+                                    OR
+                                </div>
+
+                                <div class="form-group full">
+
+                                    <div class="helper">
+                                        Enter at least one of Percentage or CGPA.
+                                        You may provide both.
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </section>
+
+
+                        <!-- =================================================
+                             03 PREFERENCES
+                        ================================================== -->
+
+                        <section class="section">
+
+                            <div class="section-heading">
+
+                                <div class="section-number">
+                                    03
+                                </div>
+
+                                <div>
+                                    <div class="section-title">
+                                        Study Preferences
+                                    </div>
+
+                                    <div class="section-subtitle">
+                                        Tell us what you're looking for
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-grid">
+
+                                <div class="form-group full">
+
+                                    <label for="course">
+                                        Preferred Course
+                                        <span class="required">*</span>
+                                    </label>
+
+                                    <div class="input-wrapper has-icon">
+
+                                        <span class="input-icon">💡</span>
+
+                                        <input
+                                            id="course"
+                                            name="course"
+                                            type="text"
+                                            placeholder="e.g. Computer Science"
+                                            required
+                                        />
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    <label for="country">
+                                        Preferred Country
+                                        <span class="required">*</span>
+                                    </label>
+
+                                    <div class="input-wrapper has-icon">
+
+                                        <span class="input-icon">🌎</span>
+
+                                        <input
+                                            id="country"
+                                            name="country"
+                                            type="text"
+                                            placeholder="e.g. Canada"
+                                            required
+                                        />
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    <label for="budget">
+                                        Maximum Annual Budget (USD)
+                                        <span class="required">*</span>
+                                    </label>
+
+                                    <div class="input-wrapper has-icon">
+
+                                        <span class="input-icon">$</span>
+
+                                        <input
+                                            id="budget"
+                                            name="budget"
+                                            type="number"
+                                            min="0"
+                                            step="100"
+                                            placeholder="e.g. 50000"
+                                            required
+                                        />
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="form-group full">
+
+                                    <label for="english">
+                                        IELTS / English Test Score
+                                        <span class="required">*</span>
+                                    </label>
+
+                                    <div class="input-wrapper has-icon">
+
+                                        <span class="input-icon">A</span>
+
+                                        <input
+                                            id="english"
+                                            name="english"
+                                            type="number"
+                                            min="0"
+                                            max="9"
+                                            step="0.5"
+                                            placeholder="e.g. 7.5"
+                                            required
+                                        />
+
+                                    </div>
+
+                                    <div class="helper">
+                                        Enter your IELTS-style band score from 0 to 9.
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </section>
+
+
+                        <!-- =================================================
+                             SUBMIT
+                        ================================================== -->
+
+                        <div class="submit-area">
+
+                            <button
+                                type="submit"
+                                class="submit-button"
+                                id="submit-button"
+                            >
+
+                                <span>
+                                    Get My AI Recommendations
+                                </span>
+
+                                <span class="button-arrow">
+                                    →
+                                </span>
+
+                            </button>
+
+                            <div class="privacy-note">
+                                🔒 Your information is used only to generate your recommendations.
+                            </div>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+
+                <!-- SIDE INFORMATION -->
+
+                <aside class="info-column">
+
+                    <div class="info-card">
+
+                        <div class="info-content">
+
+                            <div class="ai-icon">
+                                ✨
+                            </div>
+
+                            <h3>
+                                Your profile,
+                                intelligently matched.
+                            </h3>
+
+                            <p>
+                                Our recommendation engine evaluates your
+                                profile across multiple factors to find
+                                programs that fit your goals.
+                            </p>
+
+
+                            <ul class="feature-list">
+
+                                <li>
+                                    <span class="check">✓</span>
+                                    <span>
+                                        Academic qualification and performance
+                                    </span>
+                                </li>
+
+                                <li>
+                                    <span class="check">✓</span>
+                                    <span>
+                                        Course and field-of-study compatibility
+                                    </span>
+                                </li>
+
+                                <li>
+                                    <span class="check">✓</span>
+                                    <span>
+                                        Preferred country matching
+                                    </span>
+                                </li>
+
+                                <li>
+                                    <span class="check">✓</span>
+                                    <span>
+                                        Tuition budget compatibility
+                                    </span>
+                                </li>
+
+                                <li>
+                                    <span class="check">✓</span>
+                                    <span>
+                                        English-language requirements
+                                    </span>
+                                </li>
+
+                            </ul>
+
+
+                            <div class="data-note">
+                                Recommendations are generated from the
+                                university/program reference dataset and
+                                personalized using your submitted profile.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </aside>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================================
+             RESULTS VIEW
+        ========================================================== -->
+
+        <section id="results-section">
+
+            <div class="results-header">
+
+                <div>
+                    <h2>
+                        Your AI Recommendations
+                    </h2>
+
+                    <p id="results-subtitle">
+                        Personalized matches based on your profile.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    class="new-search"
+                    id="new-search-button"
+                >
+                    ← Start New Search
+                </button>
+
+            </div>
+
+
+            <div
+                id="recommendations"
+                class="recommendations"
+            ></div>
+
+
+            <div class="email-success">
+                <span>✓</span>
+                <span>
+                    Your recommendation results have also been sent to your email address.
+                </span>
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+        UniMatch AI · AI-powered university recommendation platform
+    </footer>
+
+</div>
+
+
+<!-- =============================================================
+     LOADING OVERLAY
+============================================================== -->
+
+<div
+    id="loading-overlay"
+    class="loading-overlay"
+>
+
+    <div class="loading-card">
+
+        <div class="loader"></div>
+
+        <h3>
+            Finding your best matches...
+        </h3>
+
+        <p>
+            We're analyzing your academic profile, preferences,
+            budget and eligibility across available programs.
+        </p>
+
+    </div>
+
+</div>
+
+
+<script>
+    /*
+     * =============================================================
+     * API CONFIGURATION
+     * =============================================================
+     */
+
+    const API_BASE_URL =
+        "https://recommendation-api-2j3p.onrender.com";
+
+
+    /*
+     * =============================================================
+     * DOM ELEMENTS
+     * =============================================================
+     */
+
+    const form =
+        document.getElementById("recommendation-form");
+
+    const submitButton =
+        document.getElementById("submit-button");
+
+    const loadingOverlay =
+        document.getElementById("loading-overlay");
+
+    const errorAlert =
+        document.getElementById("error-alert");
+
+    const successAlert =
+        document.getElementById("success-alert");
+
+    const formView =
+        document.getElementById("form-view");
+
+    const resultsSection =
+        document.getElementById("results-section");
+
+    const recommendationsContainer =
+        document.getElementById("recommendations");
+
+    const resultsSubtitle =
+        document.getElementById("results-subtitle");
+
+    const newSearchButton =
+        document.getElementById("new-search-button");
+
+
+    /*
+     * =============================================================
+     * HELPERS
+     * =============================================================
+     */
+
+    function showError(message) {
+        errorAlert.textContent = message;
+        errorAlert.classList.add("show");
+
+        successAlert.classList.remove("show");
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
         });
-        if (!studentResp.ok) {
-          const err = await studentResp.json();
-          throw new Error(err.detail ? JSON.stringify(err.detail) : "Failed to submit profile");
+    }
+
+
+    function showSuccess(message) {
+        successAlert.textContent = message;
+        successAlert.classList.add("show");
+
+        errorAlert.classList.remove("show");
+    }
+
+
+    function clearAlerts() {
+        errorAlert.classList.remove("show");
+        successAlert.classList.remove("show");
+    }
+
+
+    function setLoading(isLoading) {
+        if (isLoading) {
+            loadingOverlay.classList.add("show");
+            submitButton.disabled = true;
+        } else {
+            loadingOverlay.classList.remove("show");
+            submitButton.disabled = false;
         }
-        const student = await studentResp.json();
+    }
 
-        const recResp = await fetch(`${API_BASE_URL}/students/${student.id}/recommendations`, {
-          method: "POST",
-        });
-        if (!recResp.ok) {
-          const err = await recResp.json();
-          throw new Error(err.detail || "Failed to generate recommendations");
+
+    function escapeHtml(value) {
+        if (value === null || value === undefined) {
+            return "";
         }
-        const rec = await recResp.json();
 
-        let html = `<strong>Recommendations sent to ${payload.contact_email}!</strong><ul>`;
-        rec.recommendations.forEach((item, i) => {
-          html += `<li><strong>${i + 1}. ${item.university_name}</strong> (score: ${item.score})<br>${item.explanation || ""}</li>`;
+        return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+
+    function formatCurrency(value) {
+        if (
+            value === null ||
+            value === undefined ||
+            value === ""
+        ) {
+            return "Not specified";
+        }
+
+        return new Intl.NumberFormat(
+            "en-US",
+            {
+                style: "currency",
+                currency: "USD",
+                maximumFractionDigits: 0
+            }
+        ).format(Number(value));
+    }
+
+
+    function formatScore(score) {
+        const numericScore = Number(score || 0);
+
+        return (
+            numericScore * 100
+        ).toFixed(1) + "%";
+    }
+
+
+    /*
+     * =============================================================
+     * FORM VALIDATION
+     * =============================================================
+     */
+
+    function validateForm() {
+
+        clearAlerts();
+
+        document
+            .querySelectorAll(".invalid")
+            .forEach((element) => {
+                element.classList.remove("invalid");
+            });
+
+
+        const name =
+            document.getElementById("name");
+
+        const email =
+            document.getElementById("email");
+
+        const phone =
+            document.getElementById("phone");
+
+        const qualification =
+            document.getElementById("qualification");
+
+        const field =
+            document.getElementById("field");
+
+        const percentage =
+            document.getElementById("percentage");
+
+        const cgpa =
+            document.getElementById("cgpa");
+
+        const course =
+            document.getElementById("course");
+
+        const country =
+            document.getElementById("country");
+
+        const budget =
+            document.getElementById("budget");
+
+        const english =
+            document.getElementById("english");
+
+
+        const requiredFields = [
+            name,
+            email,
+            phone,
+            qualification,
+            field,
+            course,
+            country,
+            budget,
+            english
+        ];
+
+
+        for (const input of requiredFields) {
+
+            if (!input.value.trim()) {
+
+                input.classList.add("invalid");
+
+                showError(
+                    `Please complete the "${input.previousElementSibling?.textContent || "required"}" field.`
+                );
+
+                input.focus();
+
+                return false;
+            }
+        }
+
+
+        /*
+         * Email validation
+         */
+
+        const emailPattern =
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailPattern.test(email.value.trim())) {
+
+            email.classList.add("invalid");
+
+            showError(
+                "Please enter a valid email address."
+            );
+
+            email.focus();
+
+            return false;
+        }
+
+
+        /*
+         * Percentage OR CGPA
+         */
+
+        if (
+            !percentage.value.trim() &&
+            !cgpa.value.trim()
+        ) {
+
+            percentage.classList.add("invalid");
+            cgpa.classList.add("invalid");
+
+            showError(
+                "Please provide either your Percentage or CGPA."
+            );
+
+            percentage.focus();
+
+            return false;
+        }
+
+
+        /*
+         * Percentage range
+         */
+
+        if (percentage.value.trim()) {
+
+            const percentageValue =
+                Number(percentage.value);
+
+            if (
+                Number.isNaN(percentageValue) ||
+                percentageValue < 0 ||
+                percentageValue > 100
+            ) {
+
+                percentage.classList.add("invalid");
+
+                showError(
+                    "Percentage must be between 0 and 100."
+                );
+
+                percentage.focus();
+
+                return false;
+            }
+        }
+
+
+        /*
+         * CGPA range
+         */
+
+        if (cgpa.value.trim()) {
+
+            const cgpaValue =
+                Number(cgpa.value);
+
+            if (
+                Number.isNaN(cgpaValue) ||
+                cgpaValue < 0 ||
+                cgpaValue > 10
+            ) {
+
+                cgpa.classList.add("invalid");
+
+                showError(
+                    "CGPA must be between 0 and 10."
+                );
+
+                cgpa.focus();
+
+                return false;
+            }
+        }
+
+
+        /*
+         * Budget
+         */
+
+        if (
+            Number.isNaN(Number(budget.value)) ||
+            Number(budget.value) < 0
+        ) {
+
+            budget.classList.add("invalid");
+
+            showError(
+                "Please enter a valid annual budget."
+            );
+
+            budget.focus();
+
+            return false;
+        }
+
+
+        /*
+         * English score
+         */
+
+        const englishValue =
+            Number(english.value);
+
+        if (
+            Number.isNaN(englishValue) ||
+            englishValue < 0 ||
+            englishValue > 9
+        ) {
+
+            english.classList.add("invalid");
+
+            showError(
+                "English test score must be between 0 and 9."
+            );
+
+            english.focus();
+
+            return false;
+        }
+
+
+        return true;
+    }
+
+
+    /*
+     * =============================================================
+     * BUILD API PAYLOAD
+     * =============================================================
+     */
+
+    function buildPayload() {
+
+        const percentage =
+            document.getElementById("percentage").value.trim();
+
+        const cgpa =
+            document.getElementById("cgpa").value.trim();
+
+
+        const payload = {
+
+            name:
+                document.getElementById("name").value.trim(),
+
+            contact_email:
+                document.getElementById("email").value.trim(),
+
+            contact_phone:
+                document.getElementById("phone").value.trim(),
+
+            academic_qualification:
+                document.getElementById("qualification").value.trim(),
+
+            field_of_study:
+                document.getElementById("field").value.trim(),
+
+            preferred_course:
+                document.getElementById("course").value.trim(),
+
+            preferred_country:
+                document.getElementById("country").value.trim(),
+
+            budget_max_usd:
+                Number(
+                    document.getElementById("budget").value
+                ),
+
+            english_test_score:
+                Number(
+                    document.getElementById("english").value
+                )
+        };
+
+
+        /*
+         * Percentage is optional if CGPA is supplied.
+         */
+
+        if (percentage) {
+            payload.marks_percentage =
+                Number(percentage);
+        }
+
+
+        /*
+         * CGPA is optional if percentage is supplied.
+         */
+
+        if (cgpa) {
+            payload.cgpa =
+                Number(cgpa);
+        }
+
+
+        return payload;
+    }
+
+
+    /*
+     * =============================================================
+     * SUBMIT FORM
+     * =============================================================
+     */
+
+    form.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+            if (!validateForm()) {
+                return;
+            }
+
+
+            const payload =
+                buildPayload();
+
+
+            clearAlerts();
+            setLoading(true);
+
+
+            try {
+
+                /*
+                 * -------------------------------------------------
+                 * STEP 1:
+                 * Create student
+                 * -------------------------------------------------
+                 */
+
+                const studentResponse =
+                    await fetch(
+                        `${API_BASE_URL}/students`,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify(payload)
+                        }
+                    );
+
+
+                const studentData =
+                    await studentResponse.json();
+
+
+                if (!studentResponse.ok) {
+
+                    let message =
+                        "Unable to create your profile.";
+
+                    if (
+                        studentData &&
+                        studentData.detail
+                    ) {
+
+                        if (
+                            Array.isArray(
+                                studentData.detail
+                            )
+                        ) {
+
+                            message =
+                                studentData.detail
+                                    .map(
+                                        error =>
+                                            error.msg ||
+                                            "Invalid input"
+                                    )
+                                    .join(". ");
+
+                        } else {
+
+                            message =
+                                studentData.detail;
+                        }
+                    }
+
+                    throw new Error(message);
+                }
+
+
+                const studentId =
+                    studentData.id;
+
+
+                /*
+                 * -------------------------------------------------
+                 * STEP 2:
+                 * Generate recommendations
+                 * -------------------------------------------------
+                 */
+
+                const recommendationResponse =
+                    await fetch(
+                        `${API_BASE_URL}/students/${studentId}/recommendations`,
+                        {
+                            method: "POST"
+                        }
+                    );
+
+
+                const recommendationData =
+                    await recommendationResponse.json();
+
+
+                if (!recommendationResponse.ok) {
+
+                    let message =
+                        "We could not generate recommendations.";
+
+                    if (
+                        recommendationData &&
+                        recommendationData.detail
+                    ) {
+                        message =
+                            recommendationData.detail;
+                    }
+
+                    throw new Error(message);
+                }
+
+
+                /*
+                 * -------------------------------------------------
+                 * STEP 3:
+                 * Display results
+                 * -------------------------------------------------
+                 */
+
+                displayRecommendations(
+                    recommendationData,
+                    payload
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Recommendation error:",
+                    error
+                );
+
+                showError(
+                    error.message ||
+                    "Something went wrong. Please try again."
+                );
+
+            } finally {
+
+                setLoading(false);
+            }
+
+        }
+    );
+
+
+    /*
+     * =============================================================
+     * DISPLAY RECOMMENDATIONS
+     * =============================================================
+     */
+
+    function displayRecommendations(
+        data,
+        payload
+    ) {
+
+        const recommendations =
+            data.recommendations || [];
+
+
+        recommendationsContainer.innerHTML =
+            "";
+
+
+        if (!recommendations.length) {
+
+            showError(
+                "No eligible university recommendations were found for your profile."
+            );
+
+            return;
+        }
+
+
+        resultsSubtitle.textContent =
+            `Here are your top ${recommendations.length} matches for ${payload.preferred_course} in ${payload.preferred_country}.`;
+
+
+        recommendations.forEach(
+            (recommendation, index) => {
+
+                const card =
+                    createRecommendationCard(
+                        recommendation,
+                        index
+                    );
+
+                recommendationsContainer.appendChild(
+                    card
+                );
+            }
+        );
+
+
+        formView.style.display =
+            "none";
+
+        resultsSection.classList.add(
+            "show"
+        );
+
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
         });
-        html += "</ul>";
-        resultDiv.className = "success";
-        resultDiv.innerHTML = html;
-      } catch (err) {
-        resultDiv.className = "error";
-        resultDiv.innerHTML = `Error: ${err.message}`;
-      }
-    });
-  </script>
+    }
+
+
+    /*
+     * =============================================================
+     * CREATE RECOMMENDATION CARD
+     * =============================================================
+     */
+
+    function createRecommendationCard(
+        recommendation,
+        index
+    ) {
+
+        const card =
+            document.createElement("article");
+
+
+        card.className =
+            "recommendation-card" +
+            (index === 0
+                ? " top-card"
+                : "");
+
+
+        const score =
+            Number(
+                recommendation.score || 0
+            );
+
+
+        const percentageScore =
+            Math.max(
+                0,
+                Math.min(
+                    score * 100,
+                    100
+                )
+            );
+
+
+        const universityName =
+            escapeHtml(
+                recommendation.university_name ||
+                "University"
+            );
+
+
+        const country =
+            escapeHtml(
+                recommendation.country ||
+                "Country not specified"
+            );
+
+
+        const programName =
+            escapeHtml(
+                recommendation.program_name ||
+                "Program not specified"
+            );
+
+
+        const field =
+            escapeHtml(
+                recommendation.field_of_study
+                || "Not specified"
+            );
+
+
+        const degree =
+            escapeHtml(
+                recommendation.degree_level
+                || "Not specified"
+            );
+
+
+        const explanation =
+            escapeHtml(
+                recommendation.explanation ||
+                "This program matches your submitted profile."
+            );
+
+
+        const breakdown =
+            recommendation.breakdown || {};
+
+
+        const tuition =
+            breakdown.tuition_fee_usd;
+
+
+        const budgetHeadroom =
+            breakdown.budget_headroom_usd;
+
+
+        const seats =
+            breakdown.seats_available;
+
+
+        card.innerHTML = `
+
+            <div class="recommendation-top">
+
+                <div>
+
+                    <div class="rank">
+                        ${index === 0 ? "✦" : "#"}
+                        ${index + 1}
+                        ${index === 0 ? "TOP MATCH" : "MATCH"}
+                    </div>
+
+                    <div class="university-name">
+                        ${universityName}
+                    </div>
+
+                    <div class="program-name">
+                        ${programName}
+                    </div>
+
+                    <div class="university-meta">
+
+                        <span class="meta-pill">
+                            🌎 ${country}
+                        </span>
+
+                        <span class="meta-pill">
+                            📚 ${field}
+                        </span>
+
+                        <span class="meta-pill">
+                            🎓 ${degree}
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="match-score">
+
+                    <div class="score-number">
+                        ${percentageScore.toFixed(1)}%
+                    </div>
+
+                    <div class="score-label">
+                        Match Score
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="score-bar">
+
+                <div
+                    class="score-fill"
+                    style="width: ${percentageScore}%"
+                ></div>
+
+            </div>
+
+
+            <div class="details-grid">
+
+                <div class="detail-box">
+
+                    <div class="detail-label">
+                        Annual Tuition
+                    </div>
+
+                    <div class="detail-value">
+                        ${formatCurrency(tuition)}
+                    </div>
+
+                </div>
+
+
+                <div class="detail-box">
+
+                    <div class="detail-label">
+                        Budget Headroom
+                    </div>
+
+                    <div class="detail-value">
+                        ${formatCurrency(budgetHeadroom)}
+                    </div>
+
+                </div>
+
+
+                <div class="detail-box">
+
+                    <div class="detail-label">
+                        Available Seats
+                    </div>
+
+                    <div class="detail-value">
+                        ${
+                            seats !== null &&
+                            seats !== undefined
+                                ? seats
+                                : "N/A"
+                        }
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="explanation">
+
+                <div class="explanation-title">
+                    ✦ AI Match Explanation
+                </div>
+
+                <p>
+                    ${explanation}
+                </p>
+
+            </div>
+
+        `;
+
+
+        return card;
+    }
+
+
+    /*
+     * =============================================================
+     * START NEW SEARCH
+     * =============================================================
+     */
+
+    newSearchButton.addEventListener(
+        "click",
+        function () {
+
+            resultsSection.classList.remove(
+                "show"
+            );
+
+            formView.style.display =
+                "block";
+
+            form.reset();
+
+            clearAlerts();
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        }
+    );
+
+
+    /*
+     * =============================================================
+     * REMOVE INVALID STATE WHILE TYPING
+     * =============================================================
+     */
+
+    document
+        .querySelectorAll(
+            "input, select"
+        )
+        .forEach(
+            element => {
+
+                element.addEventListener(
+                    "input",
+                    function () {
+                        this.classList.remove(
+                            "invalid"
+                        );
+                    }
+                );
+
+                element.addEventListener(
+                    "change",
+                    function () {
+                        this.classList.remove(
+                            "invalid"
+                        );
+                    }
+                );
+
+            }
+        );
+
+</script>
+
 </body>
 </html>

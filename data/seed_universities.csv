@@ -1,16 +1,60 @@
-name,country,program_name,required_qualification,min_marks_percentage_cutoff,seats_available,annual_tuition_fee_usd,min_english_test_score,application_deadline
-University of Toronto,Canada,Computer Science,Bachelor's Degree,75,50,45000,6.5,2027-01-15
-McGill University,Canada,Computer Science,Bachelor's Degree,70,40,38000,6.5,2027-02-01
-University of Waterloo,Canada,Computer Science,Bachelor's Degree,80,30,42000,6.5,2027-01-31
-University of Manchester,United Kingdom,Computer Science,Bachelor's Degree,65,60,32000,6.0,2027-03-01
-Imperial College London,United Kingdom,Computer Science,Bachelor's Degree,85,25,40000,7.0,2027-01-10
-University of Melbourne,Australia,Computer Science,Bachelor's Degree,70,45,35000,6.5,2027-02-15
-Monash University,Australia,Computer Science,Bachelor's Degree,68,55,30000,6.5,2027-02-28
-Technical University of Munich,Germany,Computer Science,Bachelor's Degree,72,35,3000,6.5,2027-01-15
-University of Toronto,Canada,Data Science,Bachelor's Degree,78,20,46000,6.5,2027-01-15
-Arizona State University,United States,Computer Science,Bachelor's Degree,60,80,28000,6.0,2027-04-01
-Carnegie Mellon University,United States,Computer Science,Bachelor's Degree,90,15,58000,7.0,2026-12-15
-University of Melbourne,Australia,Business Analytics,Bachelor's Degree,70,30,34000,6.5,2027-02-15
-McGill University,Canada,Business Analytics,Bachelor's Degree,72,25,37000,6.5,2027-02-01
-University of Manchester,United Kingdom,Data Science,Bachelor's Degree,68,40,31000,6.0,2027-03-01
-National University of Singapore,Singapore,Computer Science,Bachelor's Degree,82,20,32000,6.5,2027-01-20
+name,country,program_name,required_qualification,field_of_study,degree_level,min_marks_percentage_cutoff,seats_available,annual_tuition_fee_usd,min_english_test_score,application_deadline
+University of Toronto,Canada,Computer Science,Bachelor's Degree,Computer Science,Bachelor's Degree,75,50,45000,6.5,2027-01-15
+McGill University,Canada,Computer Science,Bachelor's Degree,Computer Science,Bachelor's Degree,70,40,38000,6.5,2027-02-01
+University of Waterloo,Canada,Computer Science,Bachelor's Degree,Computer Science,Bachelor's Degree,80,30,42000,6.5,2027-01-31
+University of Toronto,Canada,Data Science,Bachelor's Degree,Computer Science,Bachelor's Degree,78,20,46000,6.5,2027-01-15
+McGill University,Canada,Business Analytics,Bachelor's Degree,Business,Bachelor's Degree,72,25,37000,6.5,2027-02-01
+University of British Columbia,Canada,Software Engineering,Bachelor's Degree,Computer Science,Bachelor's Degree,75,35,41000,6.5,2027-01-15
+University of Manchester,United Kingdom,Computer Science,Bachelor's Degree,Computer Science,Bachelor's Degree,65,60,32000,6.0,2027-03-01
+Imperial College London,United Kingdom,Computer Science,Bachelor's Degree,Computer Science,Bachelor's Degree,85,25,40000,7.0,2027-01-10
+University of Manchester,United Kingdom,Data Science,Bachelor's Degree,Computer Science,Bachelor's Degree,68,40,31000,6.0,2027-03-01
+University College London,United Kingdom,Artificial Intelligence,Bachelor's Degree,Computer Science,Bachelor's Degree,80,30,39000,6.5,2027-01-20
+University of Edinburgh,United Kingdom,Artificial Intelligence,Bachelor's Degree,Computer Science,Bachelor's Degree,78,35,36000,6.5,2027-01-25
+University of Melbourne,Australia,Computer Science,Bachelor's Degree,Computer Science,Bachelor's Degree,70,45,35000,6.5,2027-02-15
+Monash University,Australia,Computer Science,Bachelor's Degree,Computer Science,Bachelor's Degree,68,55,30000,6.5,2027-02-28
+University of Melbourne,Australia,Business Analytics,Bachelor's Degree,Business,Bachelor's Degree,70,30,34000,6.5,2027-02-15
+University of Sydney,Australia,Data Science,Bachelor's Degree,Computer Science,Bachelor's Degree,75,35,37000,6.5,2027-01-30
+Technical University of Munich,Germany,Computer Science,Bachelor's Degree,Computer Science,Bachelor's Degree,72,35,3000,6.5,2027-01-15
+RWTH Aachen University,Germany,Mechanical Engineering,Bachelor's Degree,Mechanical Engineering,Bachelor's Degree,70,40,3500,6.5,2027-02-01
+Technical University of Berlin,Germany,Electrical Engineering,Bachelor's Degree,Electrical Engineering,Bachelor's Degree,68,35,4000,6.5,2027-03-01
+National University of Singapore,Singapore,Computer Science,Bachelor's Degree,Computer Science,Bachelor's Degree,82,20,32000,6.5,2027-01-20
+Nanyang Technological University,Singapore,Data Science,Bachelor's Degree,Computer Science,Bachelor's Degree,78,25,30000,6.5,2027-01-25
+Arizona State University,United States,Computer Science,Bachelor's Degree,Computer Science,Bachelor's Degree,60,80,28000,6.0,2027-04-01
+Carnegie Mellon University,United States,Computer Science,Bachelor's Degree,Computer Science,Bachelor's Degree,90,15,58000,7.0,2026-12-15
+University of Washington,United States,Data Science,Bachelor's Degree,Computer Science,Bachelor's Degree,78,35,42000,6.5,2027-01-15
+University of California San Diego,United States,Computer Science,Bachelor's Degree,Computer Science,Bachelor's Degree,82,30,45000,7.0,2027-01-10
+Georgia Institute of Technology,United States,Cybersecurity,Bachelor's Degree,Computer Science,Bachelor's Degree,75,30,32000,6.5,2027-02-01
+University of Amsterdam,Netherlands,Computer Science,Bachelor's Degree,Computer Science,Bachelor's Degree,70,40,18000,6.5,2027-02-01
+Delft University of Technology,Netherlands,Civil Engineering,Bachelor's Degree,Civil Engineering,Bachelor's Degree,75,35,17000,6.5,2027-01-20
+Eindhoven University of Technology,Netherlands,Software Engineering,Bachelor's Degree,Computer Science,Bachelor's Degree,72,30,16500,6.5,2027-02-15
+ETH Zurich,Switzerland,Computer Science,Bachelor's Degree,Computer Science,Bachelor's Degree,85,20,2000,7.0,2027-01-10
+University of Zurich,Switzerland,Economics,Bachelor's Degree,Economics,Bachelor's Degree,72,30,18000,6.5,2027-02-15
+KU Leuven,Belgium,Biotechnology,Bachelor's Degree,Biotechnology,Bachelor's Degree,70,30,6000,6.5,2027-02-01
+University of Copenhagen,Denmark,Biomedical Science,Bachelor's Degree,Biomedical Science,Bachelor's Degree,75,25,15000,6.5,2027-01-30
+Aalto University,Finland,UX Design,Bachelor's Degree,Design,Bachelor's Degree,68,25,12000,6.5,2027-02-10
+University of Helsinki,Finland,Data Science,Bachelor's Degree,Computer Science,Bachelor's Degree,72,30,15000,6.5,2027-01-25
+University of Manchester,United Kingdom,Artificial Intelligence,Master's Degree,Computer Science,Master's Degree,65,35,36000,6.5,2027-02-15
+University of Edinburgh,United Kingdom,Data Science,Master's Degree,Computer Science,Master's Degree,70,30,38000,6.5,2027-01-30
+Imperial College London,United Kingdom,Artificial Intelligence,Master's Degree,Computer Science,Master's Degree,75,20,42000,7.0,2027-01-10
+University of Toronto,Canada,Data Science,Master's Degree,Computer Science,Master's Degree,70,25,50000,7.0,2027-01-15
+University of Waterloo,Canada,Computer Science,Master's Degree,Computer Science,Master's Degree,72,25,43000,7.0,2027-02-01
+McGill University,Canada,Biotechnology,Master's Degree,Biotechnology,Master's Degree,65,20,35000,6.5,2027-02-15
+University of Melbourne,Australia,Data Science,Master's Degree,Computer Science,Master's Degree,68,30,38000,6.5,2027-01-30
+Monash University,Australia,Cybersecurity,Master's Degree,Computer Science,Master's Degree,65,25,34000,6.5,2027-02-15
+University of Sydney,Australia,Business Analytics,Master's Degree,Business,Master's Degree,70,25,36000,6.5,2027-01-20
+Technical University of Munich,Germany,Data Science,Master's Degree,Computer Science,Master's Degree,70,30,4000,6.5,2027-01-15
+RWTH Aachen University,Germany,Mechanical Engineering,Master's Degree,Mechanical Engineering,Master's Degree,68,30,5000,6.5,2027-02-01
+National University of Singapore,Singapore,Artificial Intelligence,Master's Degree,Computer Science,Master's Degree,75,20,35000,7.0,2027-01-20
+Nanyang Technological University,Singapore,Cybersecurity,Master's Degree,Computer Science,Master's Degree,72,25,33000,6.5,2027-01-25
+Carnegie Mellon University,United States,Artificial Intelligence,Master's Degree,Computer Science,Master's Degree,85,15,60000,7.0,2026-12-15
+Arizona State University,United States,Data Science,Master's Degree,Computer Science,Master's Degree,65,40,30000,6.5,2027-04-01
+Georgia Institute of Technology,United States,Cybersecurity,Master's Degree,Computer Science,Master's Degree,72,25,35000,6.5,2027-02-01
+University of Washington,United States,Computer Science,Master's Degree,Computer Science,Master's Degree,75,25,45000,7.0,2027-01-15
+University of Amsterdam,Netherlands,Artificial Intelligence,Master's Degree,Computer Science,Master's Degree,68,30,20000,6.5,2027-02-01
+Delft University of Technology,Netherlands,Computer Science,Master's Degree,Computer Science,Master's Degree,72,25,19000,6.5,2027-01-20
+ETH Zurich,Switzerland,Computer Science,Master's Degree,Computer Science,Master's Degree,80,20,2500,7.0,2027-01-10
+University of Zurich,Switzerland,Economics,Master's Degree,Economics,Master's Degree,68,25,20000,6.5,2027-02-15
+KU Leuven,Belgium,Biotechnology,Master's Degree,Biotechnology,Master's Degree,65,25,7000,6.5,2027-02-01
+University of Copenhagen,Denmark,Public Health,Master's Degree,Health Sciences,Master's Degree,70,20,16000,6.5,2027-01-30
+Aalto University,Finland,UX Design,Master's Degree,Design,Master's Degree,65,20,14000,6.5,2027-02-10
+University of Helsinki,Finland,Data Science,Master's Degree,Computer Science,Master's Degree,68,25,16000,6.5,2027-01-25

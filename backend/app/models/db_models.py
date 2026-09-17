@@ -1,14 +1,11 @@
 """
 SQLAlchemy ORM models — students, universities, recommendations, notifications_log.
 
-v2 changes:
+v3 changes:
 - Student: marks_or_cgpa split into marks_percentage + cgpa (either may be
   provided); added budget_max_usd and field_of_study.
-- University: min_marks_or_cgpa_cutoff renamed to min_marks_percentage_cutoff
-  (always a percentage-equivalent cutoff); added annual_tuition_fee_usd,
-  seats_available is now actively used as an eligibility filter, and
-  min_english_test_score / application_deadline added as optional
-  additional eligibility criteria.
+- University: added field_of_study and degree_level so programs can be
+  matched against a student's academic background.
 """
 
 import uuid
@@ -40,7 +37,7 @@ class Student(Base):
     marks_percentage = Column(Float, nullable=True)   # 0-100 scale
     cgpa = Column(Float, nullable=True)                # 0-10 scale
     budget_max_usd = Column(Float, nullable=True)      # max annual tuition budget
-    english_test_score = Column(Float, nullable=True)  # e.g. IELTS band, optional
+    english_test_score = Column(Float, nullable=True)  # e.g. IELTS band
     preferred_course = Column(String, nullable=False)
     preferred_country = Column(String, nullable=False)
     submitted_at = Column(DateTime, default=_utcnow)
@@ -55,12 +52,20 @@ class University(Base):
     name = Column(String, nullable=False)
     country = Column(String, nullable=False)
     program_name = Column(String, nullable=False)
+
+    # Qualification requirement and academic background
     required_qualification = Column(String, nullable=False)
-    min_marks_percentage_cutoff = Column(Float, nullable=False)  # percentage-equivalent cutoff
+    field_of_study = Column(String, nullable=True)
+    degree_level = Column(String, nullable=True)
+
+    min_marks_percentage_cutoff = Column(Float, nullable=False)
     seats_available = Column(Float, nullable=True)
     annual_tuition_fee_usd = Column(Float, nullable=True)
     min_english_test_score = Column(Float, nullable=True)
-    application_deadline = Column(String, nullable=True)  # stored as ISO date string, informational for POC
+    application_deadline = Column(
+        String,
+        nullable=True
+    )  # stored as ISO date string, informational for POC
 
 
 class Recommendation(Base):
@@ -68,8 +73,14 @@ class Recommendation(Base):
 
     id = Column(String, primary_key=True, default=_uuid)
     student_id = Column(String, ForeignKey("students.id"), nullable=False)
-    ranked_university_ids = Column(JSON, nullable=False)  # ordered list of university ids
-    score_breakdown = Column(JSON, nullable=False)  # per-university breakdown + explanation, keyed by university id
+    ranked_university_ids = Column(
+        JSON,
+        nullable=False
+    )  # ordered list of university ids
+    score_breakdown = Column(
+        JSON,
+        nullable=False
+    )  # per-university breakdown + explanation, keyed by university id
     status = Column(String, default="generated")  # generated / sent
     generated_at = Column(DateTime, default=_utcnow)
     sent_at = Column(DateTime, nullable=True)
