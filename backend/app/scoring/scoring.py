@@ -293,6 +293,19 @@ def ineligibility_reason(
         if student_level != required_level:
             return "qualification_mismatch"
 
+    # Field-of-study eligibility
+    #
+    # The candidate's preferred field is a hard eligibility requirement.
+    # Related fields such as Information Technology for Computer Science
+    # are not treated as substitutes.
+    student_field = _normalize_text(student.field_of_study)
+    program_field = _normalize_text(program.field_of_study or "")
+
+    if student_field != program_field:
+        return "field_of_study_mismatch"
+
+    # Seat availability
+
     # Seat availability
     if (
         program.seats_available is not None

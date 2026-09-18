@@ -270,7 +270,7 @@ def test_full_flow_with_explanations_and_new_eligibility_filters(client):
         json=_student_payload(
             name="Priya Sharma",
             contact_email="priya@example.com",
-            field_of_study="Computer Engineering",
+            field_of_study="Computer science",
             marks_percentage=80.0,
             cgpa=None,
             budget_max_usd=40000,

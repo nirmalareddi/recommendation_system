@@ -154,24 +154,24 @@ def test_exact_field_of_study_match():
     assert result.breakdown["field_of_study_match"] == 1.0
 
 
-def test_related_field_of_study_match():
+def test_related_field_of_study_is_ineligible():
     student = make_student(field_of_study="Computer Science")
     program = make_program(field_of_study="Computer Engineering")
 
     result = score_student_against_program(student, program)
 
-    assert result.eligible is True
-    assert result.breakdown["field_of_study_match"] == 0.5
+    assert result.eligible is False
+    assert result.breakdown["reason"] == "field_of_study_mismatch"
 
 
-def test_unrelated_field_of_study_match():
+def test_unrelated_field_of_study_is_ineligible():
     student = make_student(field_of_study="Computer Science")
     program = make_program(field_of_study="Architecture")
 
     result = score_student_against_program(student, program)
 
-    assert result.eligible is True
-    assert result.breakdown["field_of_study_match"] == 0.0
+    assert result.eligible is False
+    assert result.breakdown["reason"] == "field_of_study_mismatch"
 
 
 # --- Scoring ---
