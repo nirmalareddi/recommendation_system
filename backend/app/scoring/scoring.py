@@ -262,14 +262,36 @@ def ineligibility_reason(
     program passes all eligibility checks.
     """
 
-    # Qualification-level eligibility
+        # Degree-level eligibility
+    #
+    # Candidates who have already completed a Bachelor's degree should
+    # progress to postgraduate programs only.
+    #
+    # Candidates who already hold a Master's/Postgraduate qualification
+    # should also be considered only for postgraduate programs.
+    #
+    # Therefore, Bachelor's programs must never be recommended to either
+    # Bachelor's or Postgraduate candidates.
     student_level = normalized_qualification_level(student.qualification)
-    required_level = normalized_qualification_level(
-        program.required_qualification
+    program_degree_level = normalized_qualification_level(
+        program.degree_level or program.required_qualification
     )
 
-    if student_level != required_level:
-        return "qualification_mismatch"
+    if student_level in {
+        "bachelor's degree",
+        "master's degree",
+    }:
+        if program_degree_level != "master's degree":
+            return "degree_level_mismatch"
+    else:
+        # Preserve the existing qualification rule for other qualification
+        # types.
+        required_level = normalized_qualification_level(
+            program.required_qualification
+        )
+
+        if student_level != required_level:
+            return "qualification_mismatch"
 
     # Seat availability
     if (

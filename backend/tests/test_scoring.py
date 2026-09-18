@@ -26,7 +26,7 @@ def make_student(**overrides):
         qualification="Bachelor's Degree",
         field_of_study="Computer Science",
         marks_percentage=85.0,
-        preferred_course="Computer Science",
+        preferred_course="Master of Computer Science",
         preferred_country="Canada",
     )
     defaults.update(overrides)
@@ -38,10 +38,10 @@ def make_program(**overrides):
         id="uni-1",
         name="Sample University",
         country="Canada",
-        program_name="Computer Science",
+        program_name="Master of Computer Science",
         required_qualification="Bachelor's Degree",
         field_of_study="Computer Science",
-        degree_level="Bachelor's Degree",
+        degree_level="Master's Degree",
         min_marks_percentage_cutoff=70.0,
     )
     defaults.update(overrides)
@@ -249,9 +249,10 @@ def test_rank_top_n_returns_sorted_eligible_only():
             country="Germany",
         ),
         make_program(
-            id="uni-3",
-            required_qualification="PhD",
-        ),
+    id="uni-3",
+    required_qualification="Bachelor's Degree",
+    degree_level="Bachelor's Degree",
+),
         make_program(
             id="uni-4",
             seats_available=0,
@@ -267,3 +268,69 @@ def test_rank_top_n_returns_sorted_eligible_only():
     assert len(top) == 2
     assert top[0].university_id == "uni-1"
     assert top[0].score >= top[1].score
+def test_bachelors_candidate_cannot_get_bachelors_program():
+    student = make_student(
+        qualification="Bachelor's Degree",
+        field_of_study="Computer Science",
+    )
+
+    program = make_program(
+        degree_level="Bachelor's Degree",
+        required_qualification="Bachelor's Degree",
+    )
+
+    result = score_student_against_program(student, program)
+
+    assert result.eligible is False
+    assert result.breakdown["reason"] == "degree_level_mismatch"
+
+
+def test_bachelors_candidate_can_get_masters_program():
+    student = make_student(
+        qualification="Bachelor's Degree",
+        field_of_study="Computer Science",
+    )
+
+    program = make_program(
+        degree_level="Master's Degree",
+        required_qualification="Bachelor's Degree",
+        program_name="Master of Computer Science",
+    )
+
+    result = score_student_against_program(student, program)
+
+    assert result.eligible is True
+
+
+def test_postgraduate_candidate_cannot_get_bachelors_program():
+    student = make_student(
+        qualification="Master's Degree",
+        field_of_study="Computer Science",
+    )
+
+    program = make_program(
+        degree_level="Bachelor's Degree",
+        required_qualification="Bachelor's Degree",
+    )
+
+    result = score_student_against_program(student, program)
+
+    assert result.eligible is False
+    assert result.breakdown["reason"] == "degree_level_mismatch"
+
+
+def test_postgraduate_candidate_can_get_masters_program():
+    student = make_student(
+        qualification="Master's Degree",
+        field_of_study="Computer Science",
+    )
+
+    program = make_program(
+        degree_level="Master's Degree",
+        required_qualification="Bachelor's Degree",
+        program_name="Master of Computer Science",
+    )
+
+    result = score_student_against_program(student, program)
+
+    assert result.eligible is True    

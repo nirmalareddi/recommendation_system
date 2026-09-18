@@ -404,7 +404,7 @@ def test_budget_filter_excludes_expensive_program(client):
             contact_email="tight@example.com",
             field_of_study="Computer Science",
             marks_percentage=80.0,
-            budget_max_usd=24000,
+            budget_max_usd=35000,
             english_test_score=7.0,
             preferred_course="Computer Science",
             preferred_country="New Zealand",
