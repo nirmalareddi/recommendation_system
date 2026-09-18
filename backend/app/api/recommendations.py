@@ -4,11 +4,12 @@ Recommendation generation endpoints.
 This module:
 1. Loads a student profile.
 2. Loads all university/program reference data.
-3. Scores and ranks eligible programs.
-4. Generates personalized explanations.
-5. Saves the recommendation.
-6. Sends the recommendation email.
-7. Returns the recommendations through the API.
+3. Restricts recommendations to New Zealand programs.
+4. Scores and ranks eligible programs.
+5. Generates personalized explanations.
+6. Saves the recommendation.
+7. Sends the recommendation email.
+8. Returns the recommendations through the API.
 """
 
 from datetime import datetime, timezone
@@ -38,6 +39,7 @@ router = APIRouter(
 # ---------------------------------------------------------------------------
 # Conversion helpers
 # ---------------------------------------------------------------------------
+
 
 def _to_student_profile(student: db_models.Student) -> StudentProfile:
     """
@@ -84,6 +86,7 @@ def _to_university_program(
 # POST /students/{student_id}/recommendations
 # ---------------------------------------------------------------------------
 
+
 @router.post(
     "/{student_id}/recommendations",
     response_model=RecommendationOut,
@@ -127,6 +130,26 @@ def generate_and_send_recommendations(
         raise HTTPException(
             status_code=400,
             detail="No university reference data seeded yet",
+        )
+
+    # -----------------------------------------------------------------------
+    # 2A. New Zealand-only safeguard
+    # -----------------------------------------------------------------------
+    # The application currently recommends universities in New Zealand
+    # only. Even if another country is accidentally added to the database,
+    # it must never enter the recommendation/scoring pipeline.
+
+    universities = [
+        university
+        for university in universities
+        if university.country
+        and university.country.strip().lower() == "new zealand"
+    ]
+
+    if not universities:
+        raise HTTPException(
+            status_code=422,
+            detail="No New Zealand university programs are available",
         )
 
     # -----------------------------------------------------------------------
@@ -318,6 +341,7 @@ def generate_and_send_recommendations(
 # ---------------------------------------------------------------------------
 # GET /students/{student_id}/recommendations
 # ---------------------------------------------------------------------------
+
 
 @router.get(
     "/{student_id}/recommendations",
